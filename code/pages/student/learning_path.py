@@ -100,22 +100,28 @@ def display_learning_path():
             status = "🔒 Locked"
         hover_texts.append(f"<b>{label}</b><br>{status}<br>Progress: {comp}%")
 
-    fig_tree = go.Figure(go.Sunburst(
+    fig_tree = go.Figure(go.Icicle(
         labels=skills_data['labels'],
         parents=skills_data['parents'],
         values=skills_data['values'],
         marker=dict(
             colors=colors,
-            line=dict(color='white', width=2)
+            line=dict(color='white', width=2),
+            colorscale=None
         ),
         text=hover_texts,
         hovertemplate='%{text}<extra></extra>',
         branchvalues="total",
+        textposition='middle center',
+        tiling=dict(
+            orientation='v',
+            pad=3
+        )
     ))
 
     fig_tree.update_layout(
         title={
-            'text': "Click on sections to explore your learning path",
+            'text': "Click on sections to expand and explore your learning path",
             'x': 0.5,
             'xanchor': 'center'
         },
