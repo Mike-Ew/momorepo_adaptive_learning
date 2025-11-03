@@ -102,50 +102,91 @@ def display_student_dashboard():
     """Student dashboard with progress overview"""
     st.header("Student Dashboard")
 
+    # Get student-specific data
+    from modules.student_data import get_student_profile
+    username = st.session_state.get('username', 'student1')
+    student_profile = get_student_profile(username)
+
+    # Use default data if no profile found
+    if not student_profile:
+        student_profile = {
+            'overall_progress': 68,
+            'assignments_completed': 12,
+            'assignments_total': 20,
+            'course_progress': [
+                {'name': 'Engineering 101', 'progress': 68},
+                {'name': 'Data Science Basics', 'progress': 62},
+                {'name': 'Physics Fundamentals', 'progress': 75},
+            ],
+            'next_deadlines': [
+                {'title': 'Assignment 3', 'due': 'in 2 days'},
+                {'title': 'Quiz 5', 'due': 'in 5 days'},
+                {'title': 'Project Milestone', 'due': 'in 1 week'},
+            ],
+            'weekly_study_hours': [2.5, 1.5, 3.0, 2.0, 1.0, 4.0, 2.5],
+            'recommendations': []
+        }
+
     # Progress overview
     st.subheader("Your Progress")
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("Overall Progress", "68%")
-        st.metric("Assignments Completed", "12/20")
+        st.metric("Overall Progress", f"{student_profile['overall_progress']}%")
+        st.metric("Assignments Completed",
+                  f"{student_profile['assignments_completed']}/{student_profile['assignments_total']}")
 
         # Progress by course
         st.subheader("Progress by Course")
-        course_progress = pd.DataFrame({
-            'Course': ['Engineering 101', 'Data Science Basics', 'Physics Fundamentals'],
-            'Progress': [75, 62, 45]
-        })
+        course_progress = pd.DataFrame(student_profile['course_progress'])
+        course_progress.rename(columns={'name': 'Course', 'progress': 'Progress'}, inplace=True)
+
         fig = px.bar(course_progress, x='Course', y='Progress', text='Progress',
                      color='Progress', color_continuous_scale='blues')
         fig.update_traces(texttemplate='%{text}%', textposition='outside')
+        fig.update_layout(yaxis_range=[0, 100])
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         st.markdown("### Next Deadlines")
-        st.info("Assignment 3: Due in 2 days")
-        st.info("Quiz 5: Due in 5 days")
-        st.info("Project Milestone: Due in 1 week")
+        for deadline in student_profile['next_deadlines']:
+            # Check if overdue
+            if 'OVERDUE' in deadline['title']:
+                st.error(f"{deadline['title']}: {deadline['due']}")
+            elif 'tomorrow' in deadline['due'] or 'day ago' in deadline['due']:
+                st.warning(f"{deadline['title']}: {deadline['due']}")
+            else:
+                st.info(f"{deadline['title']}: {deadline['due']}")
 
         # Study time
         st.subheader("Weekly Study Time")
         study_data = pd.DataFrame({
             'Day': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            'Hours': [2.5, 1.5, 3.0, 2.0, 1.0, 4.0, 2.5]
+            'Hours': student_profile['weekly_study_hours']
         })
         st.bar_chart(study_data.set_index('Day'))
 
     # Recommendations
     st.subheader("Personalized Recommendations")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("📘 **Review Material**")
-        st.markdown("Data Structures: Linked Lists")
-        st.markdown("_Recommended based on recent quiz performance_")
-    with col2:
-        st.markdown("📝 **Practice Exercise**")
-        st.markdown("Algorithm Efficiency Analysis")
-        st.markdown("_Helps prepare for your upcoming assignment_")
-    with col3:
-        st.markdown("🎬 **Supplementary Resource**")
-        st.markdown("Video: Understanding Big O Notation")
-        st.markdown("_Aligns with your current learning path_")
+
+    if student_profile.get('recommendations'):
+        cols = st.columns(3)
+        for idx, rec in enumerate(student_profile['recommendations']):
+            with cols[idx]:
+                st.markdown(f"{rec['icon']} **{rec['title']}**")
+                st.markdown(rec['content'])
+                st.markdown(f"_{rec['reason']}_")
+    else:
+        # Fallback recommendations
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown("📘 **Review Material**")
+            st.markdown("Data Structures: Linked Lists")
+            st.markdown("_Recommended based on recent quiz performance_")
+        with col2:
+            st.markdown("📝 **Practice Exercise**")
+            st.markdown("Algorithm Efficiency Analysis")
+            st.markdown("_Helps prepare for your upcoming assignment_")
+        with col3:
+            st.markdown("🎬 **Supplementary Resource**")
+            st.markdown("Video: Understanding Big O Notation")
+            st.markdown("_Aligns with your current learning path_")

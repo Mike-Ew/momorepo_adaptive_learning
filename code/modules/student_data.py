@@ -21,6 +21,40 @@ REAL_STUDENTS = {
         'risk_level': 'Low',
         'action_needed': 'None',
         'engagement_pattern': 'Consistent',
+        # Dashboard data
+        'assignments_completed': 12,
+        'assignments_total': 20,
+        'next_deadlines': [
+            {'title': 'Matrix Operations Quiz', 'due': 'in 2 days'},
+            {'title': 'Advanced Theory Assignment', 'due': 'in 5 days'},
+            {'title': 'Project Proposal Draft', 'due': 'in 1 week'},
+        ],
+        'weekly_study_hours': [2.5, 1.5, 3.0, 2.0, 1.0, 4.0, 2.5],  # Mon-Sun
+        'course_progress': [
+            {'name': 'Engineering 101', 'progress': 68},
+            {'name': 'Data Science Basics', 'progress': 62},
+            {'name': 'Physics Fundamentals', 'progress': 75},
+        ],
+        'recommendations': [
+            {
+                'icon': '🎬',
+                'title': 'Video Tutorial',
+                'content': 'Matrix Operations Explained',
+                'reason': 'Matches your visual learning style'
+            },
+            {
+                'icon': '📝',
+                'title': 'Practice Problems',
+                'content': 'Interactive Matrix Exercises',
+                'reason': 'Reinforces current module'
+            },
+            {
+                'icon': '📊',
+                'title': 'Visual Guide',
+                'content': 'Differential Equations Diagram',
+                'reason': 'Prepares for upcoming topic'
+            },
+        ],
         # Module-level progress
         'roadmap_data': [
             {
@@ -88,6 +122,40 @@ REAL_STUDENTS = {
         'risk_level': 'Low',
         'action_needed': 'None',
         'engagement_pattern': 'High Achiever',
+        # Dashboard data - high achiever
+        'assignments_completed': 19,
+        'assignments_total': 20,
+        'next_deadlines': [
+            {'title': 'Final Project Presentation', 'due': 'in 10 days'},
+            {'title': 'Peer Review Submissions', 'due': 'in 12 days'},
+            {'title': 'Course Evaluation', 'due': 'in 2 weeks'},
+        ],
+        'weekly_study_hours': [4.5, 5.0, 4.0, 5.5, 3.5, 6.0, 4.5],  # High study time
+        'course_progress': [
+            {'name': 'Engineering 101', 'progress': 92},
+            {'name': 'Data Science Basics', 'progress': 95},
+            {'name': 'Physics Fundamentals', 'progress': 88},
+        ],
+        'recommendations': [
+            {
+                'icon': '📚',
+                'title': 'Advanced Reading',
+                'content': 'Research Paper: ML in Engineering',
+                'reason': 'Challenge yourself with advanced material'
+            },
+            {
+                'icon': '🎯',
+                'title': 'Quiz Challenge',
+                'content': 'Advanced Topics Assessment',
+                'reason': 'Test your comprehensive knowledge'
+            },
+            {
+                'icon': '🌟',
+                'title': 'Enrichment',
+                'content': 'Article: Industry Best Practices',
+                'reason': 'Aligns with your reading preference'
+            },
+        ],
         # Module-level progress - high performer
         'roadmap_data': [
             {
@@ -155,6 +223,40 @@ REAL_STUDENTS = {
         'risk_level': 'High',
         'action_needed': 'Intervention',
         'engagement_pattern': 'Struggling',
+        # Dashboard data - struggling student
+        'assignments_completed': 6,
+        'assignments_total': 20,
+        'next_deadlines': [
+            {'title': 'Practice Exercises (OVERDUE)', 'due': '2 days ago'},
+            {'title': 'Module 2 Assessment', 'due': 'tomorrow'},
+            {'title': 'Fundamentals Quiz Retake', 'due': 'in 3 days'},
+        ],
+        'weekly_study_hours': [0.5, 1.0, 0.0, 1.5, 0.5, 2.0, 1.0],  # Low, inconsistent
+        'course_progress': [
+            {'name': 'Engineering 101', 'progress': 35},
+            {'name': 'Data Science Basics', 'progress': 28},
+            {'name': 'Physics Fundamentals', 'progress': 42},
+        ],
+        'recommendations': [
+            {
+                'icon': '🎥',
+                'title': 'Video Series',
+                'content': 'Fundamentals Review Sessions',
+                'reason': 'Catch up on missed concepts'
+            },
+            {
+                'icon': '👥',
+                'title': 'Discussion Group',
+                'content': 'Join Study Group Session',
+                'reason': 'Collaborative learning support'
+            },
+            {
+                'icon': '📞',
+                'title': 'Office Hours',
+                'content': 'One-on-One Tutoring Available',
+                'reason': 'Get personalized help'
+            },
+        ],
         # Module-level progress - struggling student
         'roadmap_data': [
             {
