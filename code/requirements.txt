@@ -4,3 +4,4 @@ numpy>=2.3.4
 plotly>=6.3.1
 PyJWT>=2.8.0
 python-dotenv>=1.0.0
+streamlit-calendar>=0.7.0
