@@ -9,70 +9,37 @@ from modules.auth import update_user_preferences
 
 def display_learning_path():
     st.title("My Learning Path")
-    
+
+    # Get student-specific data
+    from modules.student_data import get_student_profile
+    username = st.session_state.get('username', 'student1')
+    student_profile = get_student_profile(username)
+
+    # Use default data if no profile found
+    if not student_profile:
+        student_profile = {
+            'overall_progress': 68,
+            'current_module': 'Module 3: Advanced Theory',
+            'pace_status': 'On Track',
+            'pace_delta': '2 days ahead',
+            'roadmap_data': []
+        }
+
     # Overview metrics
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Overall Progress", "68%")
+        st.metric("Overall Progress", f"{student_profile['overall_progress']}%")
     with col2:
-        st.metric("Current Module", "Module 3: Advanced Concepts")
+        st.metric("Current Module", student_profile['current_module'])
     with col3:
-        st.metric("Pace", "On Track", delta="2 days ahead")
+        st.metric("Pace", student_profile['pace_status'], delta=student_profile['pace_delta'])
 
     # Roadmap-style Learning Path Visualization
     st.markdown("---")
     st.subheader("🗺️ Your Learning Roadmap")
 
-    # Define learning path structure
-    roadmap_data = [
-        {
-            'module': '1. Introduction',
-            'completion': 100,
-            'topics': [
-                {'name': 'Course Overview', 'completion': 100},
-                {'name': 'Development Tools', 'completion': 100},
-                {'name': 'Environment Setup', 'completion': 100},
-            ]
-        },
-        {
-            'module': '2. Basic Concepts',
-            'completion': 80,
-            'topics': [
-                {'name': 'Fundamentals', 'completion': 100},
-                {'name': 'Core Principles', 'completion': 100},
-                {'name': 'Practice Exercises', 'completion': 80},
-                {'name': 'Module Assessment', 'completion': 50},
-            ]
-        },
-        {
-            'module': '3. Advanced Theory',
-            'completion': 45,
-            'topics': [
-                {'name': 'Complex Variables', 'completion': 92},
-                {'name': 'Matrix Operations', 'completion': 45},
-                {'name': 'Differential Equations', 'completion': 0},
-                {'name': 'Numerical Methods', 'completion': 0},
-            ]
-        },
-        {
-            'module': '4. Applications',
-            'completion': 10,
-            'topics': [
-                {'name': 'Real-world Case Studies', 'completion': 10},
-                {'name': 'Industry Tools', 'completion': 10},
-                {'name': 'Project Planning', 'completion': 0},
-            ]
-        },
-        {
-            'module': '5. Final Project',
-            'completion': 0,
-            'topics': [
-                {'name': 'Project Proposal', 'completion': 0},
-                {'name': 'Development Phase', 'completion': 0},
-                {'name': 'Final Presentation', 'completion': 0},
-            ]
-        },
-    ]
+    # Get roadmap data from student profile
+    roadmap_data = student_profile.get('roadmap_data', [])
 
     # Helper function to get status styling
     def get_status_style(completion):

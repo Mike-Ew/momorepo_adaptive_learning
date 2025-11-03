@@ -160,15 +160,39 @@ def display_student_progress():
     with col3:
         sort_by = st.selectbox("Sort By", ["Risk (High to Low)", "Progress (Low to High)", "Name"])
     
-    # Mock student data
-    students = pd.DataFrame({
-        'Student ID': range(1001, 1026),
-        'Name': [f"Student {i}" for i in range(1, 26)],
-        'Progress': np.random.uniform(20, 95, 25),
-        'Last Active': [f"{i} days ago" for i in np.random.randint(1, 10, 25)],
-        'Risk Level': np.random.choice(['Low', 'Medium', 'High'], 25, p=[0.7, 0.2, 0.1]),
-        'Action Needed': np.random.choice(['None', 'Check-in', 'Intervention'], 25, p=[0.6, 0.3, 0.1])
-    })
+    # Import real student data
+    from modules.student_data import get_all_real_students
+
+    # Get real students
+    real_students_data = get_all_real_students()
+
+    # Create list for real students
+    real_student_rows = []
+    for username, profile in real_students_data.items():
+        real_student_rows.append({
+            'Student ID': profile['id'],
+            'Name': profile['name'],
+            'Progress': profile['overall_progress'],
+            'Last Active': profile['last_active'],
+            'Risk Level': profile['risk_level'],
+            'Action Needed': profile['action_needed']
+        })
+
+    # Create mock data for remaining students (4-25)
+    mock_student_rows = []
+    for i in range(4, 26):
+        mock_student_rows.append({
+            'Student ID': 1000 + i,
+            'Name': f"Student {i}",
+            'Progress': np.random.uniform(20, 95),
+            'Last Active': f"{np.random.randint(1, 10)} days ago",
+            'Risk Level': np.random.choice(['Low', 'Medium', 'High'], p=[0.7, 0.2, 0.1]),
+            'Action Needed': np.random.choice(['None', 'Check-in', 'Intervention'], p=[0.6, 0.3, 0.1])
+        })
+
+    # Combine real and mock students
+    all_student_rows = real_student_rows + mock_student_rows
+    students = pd.DataFrame(all_student_rows)
     
     # Apply filters
     if risk_filter:
@@ -199,17 +223,35 @@ def display_student_progress():
 
     selected_student = st.selectbox("Select Student", students['Name'], key="individual_student_select")
 
+    # Check if this is one of our real students
+    student_profile = None
+    for username, profile in real_students_data.items():
+        if profile['name'] == selected_student:
+            student_profile = profile
+            break
+
     col1, col2 = st.columns(2)
     with col1:
-        # Mock individual student data
         st.markdown(f"### {selected_student}")
-        st.markdown("**Progress:** 67.5%")
-        st.markdown("**Risk Level:** Medium")
-        st.markdown("**Last Active:** 2 days ago")
-        st.markdown("**Learning Style:** Visual/Interactive")
-        st.markdown("**Preferred Pace:** Moderate")
-        st.markdown("**Content Format:** Video + Practice Problems")
-        st.markdown("**Engagement Pattern:** Sporadic")
+
+        if student_profile:
+            # Show real student data
+            st.markdown(f"**Progress:** {student_profile['overall_progress']}%")
+            st.markdown(f"**Risk Level:** {student_profile['risk_level']}")
+            st.markdown(f"**Last Active:** {student_profile['last_active']}")
+            st.markdown(f"**Learning Style:** {student_profile['learning_style']}")
+            st.markdown(f"**Preferred Pace:** {student_profile['preferred_pace']}")
+            st.markdown(f"**Content Format:** {student_profile['content_format']}")
+            st.markdown(f"**Engagement Pattern:** {student_profile['engagement_pattern']}")
+        else:
+            # Mock data for other students
+            st.markdown("**Progress:** 67.5%")
+            st.markdown("**Risk Level:** Medium")
+            st.markdown("**Last Active:** 2 days ago")
+            st.markdown("**Learning Style:** Visual/Interactive")
+            st.markdown("**Preferred Pace:** Moderate")
+            st.markdown("**Content Format:** Video + Practice Problems")
+            st.markdown("**Engagement Pattern:** Sporadic")
 
         # Actions
         st.button("Send Message", key="teacher_send_msg")
