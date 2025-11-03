@@ -19,169 +19,186 @@ def display_learning_path():
     with col3:
         st.metric("Pace", "On Track", delta="2 days ahead")
 
-    # Skills Tree Visualization
+    # Roadmap-style Learning Path Visualization
     st.markdown("---")
-    st.subheader("🌳 Skills Tree - Your Learning Path")
+    st.subheader("🗺️ Your Learning Roadmap")
 
-    # Create network graph tree structure with nodes and edges
-    import numpy as np
-
-    # Define tree structure with hierarchical positions
-    tree_nodes = [
-        # (id, label, completion, parent_id, level)
-        (0, 'Engineering<br>Course', 68, None, 0),
-        # Level 1 - Main modules
-        (1, '1. Introduction', 100, 0, 1),
-        (2, '2. Basic<br>Concepts', 80, 0, 1),
-        (3, '3. Advanced<br>Theory', 45, 0, 1),
-        (4, '4. Applications', 10, 0, 1),
-        (5, '5. Final<br>Project', 0, 0, 1),
-        # Level 2 - Topics
-        (6, '1.1 Overview', 100, 1, 2),
-        (7, '1.2 Tools', 100, 1, 2),
-        (8, '1.3 Setup', 100, 1, 2),
-        (9, '2.1 Fundamentals', 100, 2, 2),
-        (10, '2.2 Core Principles', 100, 2, 2),
-        (11, '2.3 Practice', 80, 2, 2),
-        (12, '2.4 Assessment', 50, 2, 2),
-        (13, '3.1 Complex Var', 92, 3, 2),
-        (14, '3.2 Matrix Ops', 45, 3, 2),
-        (15, '3.3 Diff Eq', 0, 3, 2),
-        (16, '3.4 Numerical', 0, 3, 2),
-        (17, '4.1 Real Cases', 10, 4, 2),
-        (18, '4.2 Industry Tools', 10, 4, 2),
-        (19, '4.3 Planning', 0, 4, 2),
-        (20, '5.1 Proposal', 0, 5, 2),
-        (21, '5.2 Development', 0, 5, 2),
-        (22, '5.3 Presentation', 0, 5, 2),
+    # Define learning path structure
+    roadmap_data = [
+        {
+            'module': '1. Introduction',
+            'completion': 100,
+            'topics': [
+                {'name': 'Course Overview', 'completion': 100},
+                {'name': 'Development Tools', 'completion': 100},
+                {'name': 'Environment Setup', 'completion': 100},
+            ]
+        },
+        {
+            'module': '2. Basic Concepts',
+            'completion': 80,
+            'topics': [
+                {'name': 'Fundamentals', 'completion': 100},
+                {'name': 'Core Principles', 'completion': 100},
+                {'name': 'Practice Exercises', 'completion': 80},
+                {'name': 'Module Assessment', 'completion': 50},
+            ]
+        },
+        {
+            'module': '3. Advanced Theory',
+            'completion': 45,
+            'topics': [
+                {'name': 'Complex Variables', 'completion': 92},
+                {'name': 'Matrix Operations', 'completion': 45},
+                {'name': 'Differential Equations', 'completion': 0},
+                {'name': 'Numerical Methods', 'completion': 0},
+            ]
+        },
+        {
+            'module': '4. Applications',
+            'completion': 10,
+            'topics': [
+                {'name': 'Real-world Case Studies', 'completion': 10},
+                {'name': 'Industry Tools', 'completion': 10},
+                {'name': 'Project Planning', 'completion': 0},
+            ]
+        },
+        {
+            'module': '5. Final Project',
+            'completion': 0,
+            'topics': [
+                {'name': 'Project Proposal', 'completion': 0},
+                {'name': 'Development Phase', 'completion': 0},
+                {'name': 'Final Presentation', 'completion': 0},
+            ]
+        },
     ]
 
-    # Calculate positions for tree layout
-    def get_node_positions(nodes):
-        positions = {}
-        level_counts = {}
-        level_indices = {}
-
-        # Count nodes per level
-        for node_id, label, comp, parent_id, level in nodes:
-            level_counts[level] = level_counts.get(level, 0) + 1
-
-        # Initialize level indices
-        for level in level_counts:
-            level_indices[level] = 0
-
-        # Assign positions
-        for node_id, label, comp, parent_id, level in nodes:
-            y = -level * 1.5  # Vertical position (top to bottom)
-
-            # Horizontal position - spread evenly
-            total_in_level = level_counts[level]
-            index = level_indices[level]
-            level_indices[level] += 1
-
-            # Center the nodes
-            x = (index - (total_in_level - 1) / 2) * 2
-
-            positions[node_id] = (x, y)
-
-        return positions
-
-    positions = get_node_positions(tree_nodes)
-
-    # Create edges (connecting lines)
-    edge_x = []
-    edge_y = []
-
-    for node_id, label, comp, parent_id, level in tree_nodes:
-        if parent_id is not None:
-            x0, y0 = positions[parent_id]
-            x1, y1 = positions[node_id]
-            edge_x.extend([x0, x1, None])
-            edge_y.extend([y0, y1, None])
-
-    # Create edge trace
-    edge_trace = go.Scatter(
-        x=edge_x, y=edge_y,
-        line=dict(width=2, color='#888'),
-        hoverinfo='none',
-        mode='lines'
-    )
-
-    # Create node traces (separate by completion status for coloring)
-    node_data = {'completed': [], 'in_progress': [], 'started': [], 'locked': []}
-
-    for node_id, label, comp, parent_id, level in tree_nodes:
-        x, y = positions[node_id]
-
-        if comp == 100:
-            category = 'completed'
-            status = "✅ Completed"
-        elif comp >= 50:
-            category = 'in_progress'
-            status = "🔄 In Progress"
-        elif comp > 0:
-            category = 'started'
-            status = "🚀 Started"
+    # Helper function to get status styling
+    def get_status_style(completion):
+        if completion == 100:
+            return {
+                'bg_color': '#d4edda',
+                'border_color': '#28a745',
+                'text_color': '#155724',
+                'icon': '✅',
+                'status': 'Completed'
+            }
+        elif completion >= 50:
+            return {
+                'bg_color': '#fff3cd',
+                'border_color': '#ffc107',
+                'text_color': '#856404',
+                'icon': '🔄',
+                'status': 'In Progress'
+            }
+        elif completion > 0:
+            return {
+                'bg_color': '#d1ecf1',
+                'border_color': '#17a2b8',
+                'text_color': '#0c5460',
+                'icon': '🚀',
+                'status': 'Started'
+            }
         else:
-            category = 'locked'
-            status = "🔒 Locked"
+            return {
+                'bg_color': '#f8f9fa',
+                'border_color': '#6c757d',
+                'text_color': '#6c757d',
+                'icon': '🔒',
+                'status': 'Locked'
+            }
 
-        node_data[category].append({
-            'x': x, 'y': y, 'label': label.replace('<br>', ' '),
-            'hover': f"<b>{label.replace('<br>', ' ')}</b><br>{status}<br>Progress: {comp}%"
-        })
+    # Render roadmap
+    for idx, module_data in enumerate(roadmap_data):
+        module_name = module_data['module']
+        module_completion = module_data['completion']
+        topics = module_data['topics']
 
-    # Color mapping
-    color_map = {
-        'completed': '#28a745',    # Green
-        'in_progress': '#ffc107',  # Orange
-        'started': '#17a2b8',      # Blue
-        'locked': '#6c757d'        # Gray
-    }
+        style = get_status_style(module_completion)
 
-    # Create node traces
-    node_traces = []
-    for category, nodes in node_data.items():
-        if nodes:
-            node_traces.append(go.Scatter(
-                x=[n['x'] for n in nodes],
-                y=[n['y'] for n in nodes],
-                mode='markers+text',
-                marker=dict(
-                    size=25,
-                    color=color_map[category],
-                    line=dict(width=2, color='white')
-                ),
-                text=[n['label'] for n in nodes],
-                textposition="middle center",
-                textfont=dict(size=9, color='white', family='Arial Black'),
-                hovertext=[n['hover'] for n in nodes],
-                hoverinfo='text',
-                name=category.replace('_', ' ').title()
-            ))
+        # Module header box
+        st.markdown(f"""
+        <div style="
+            background-color: {style['bg_color']};
+            border-left: 5px solid {style['border_color']};
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 20px 0 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        ">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: {style['text_color']};">
+                    {style['icon']} {module_name}
+                </h3>
+                <span style="
+                    background-color: white;
+                    padding: 4px 12px;
+                    border-radius: 12px;
+                    font-weight: bold;
+                    color: {style['text_color']};
+                    font-size: 14px;
+                ">
+                    {module_completion}%
+                </span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Create figure
-    fig_tree = go.Figure(data=[edge_trace] + node_traces)
+        # Topics grid
+        cols = st.columns(len(topics))
+        for col, topic in zip(cols, topics):
+            topic_style = get_status_style(topic['completion'])
 
-    fig_tree.update_layout(
-        title={
-            'text': "Skills Tree - Your Learning Path",
-            'x': 0.5,
-            'xanchor': 'center'
-        },
-        showlegend=False,
-        hovermode='closest',
-        height=650,
-        margin=dict(t=50, l=20, r=20, b=20),
-        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        plot_bgcolor='white',
-        paper_bgcolor='white'
-    )
+            with col:
+                st.markdown(f"""
+                <div style="
+                    background-color: white;
+                    border: 2px solid {topic_style['border_color']};
+                    border-radius: 8px;
+                    padding: 12px;
+                    text-align: center;
+                    min-height: 100px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                ">
+                    <div style="font-size: 24px; margin-bottom: 8px;">
+                        {topic_style['icon']}
+                    </div>
+                    <div style="
+                        font-weight: 600;
+                        color: #333;
+                        font-size: 13px;
+                        margin-bottom: 8px;
+                        line-height: 1.3;
+                    ">
+                        {topic['name']}
+                    </div>
+                    <div style="
+                        background-color: {topic_style['bg_color']};
+                        padding: 3px 8px;
+                        border-radius: 10px;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: {topic_style['text_color']};
+                    ">
+                        {topic['completion']}%
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
-    st.plotly_chart(fig_tree, use_container_width=True)
+        # Connecting arrow (except for last module)
+        if idx < len(roadmap_data) - 1:
+            st.markdown("""
+            <div style="text-align: center; margin: 15px 0; font-size: 30px; color: #6c757d;">
+                ↓
+            </div>
+            """, unsafe_allow_html=True)
 
     # Legend
+    st.markdown("---")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown("**✅ Completed** - 100%")
@@ -192,7 +209,7 @@ def display_learning_path():
     with col4:
         st.markdown("**🔒 Locked** - 0%")
 
-    st.info("💡 **Tip:** Hover over nodes to see detailed progress information. Lines connect parent topics to their subtopics.")
+    st.info("💡 **Tip:** Progress through modules from top to bottom. Complete all topics in a module before moving to the next!")
 
     # Learning path visualization
     st.markdown("---")
