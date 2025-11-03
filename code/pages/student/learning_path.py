@@ -23,110 +23,160 @@ def display_learning_path():
     st.markdown("---")
     st.subheader("🌳 Skills Tree - Your Learning Path")
 
-    # Create interactive skills tree using Plotly Sunburst
-    skills_data = {
-        'labels': [
-            # Root
-            'Engineering Course',
-            # Level 1 - Main modules
-            '1. Introduction', '2. Basic Concepts', '3. Advanced Theory', '4. Applications', '5. Final Project',
-            # Level 2 - Topics under each module
-            '1.1 Overview', '1.2 Tools', '1.3 Setup',
-            '2.1 Fundamentals', '2.2 Core Principles', '2.3 Practice', '2.4 Assessment',
-            '3.1 Complex Variables', '3.2 Matrix Operations', '3.3 Differential Eq', '3.4 Numerical Methods',
-            '4.1 Real-world Cases', '4.2 Industry Tools', '4.3 Project Planning',
-            '5.1 Proposal', '5.2 Development', '5.3 Presentation'
-        ],
-        'parents': [
-            # Root parent
-            '',
-            # Level 1 parents (all belong to root)
-            'Engineering Course', 'Engineering Course', 'Engineering Course', 'Engineering Course', 'Engineering Course',
-            # Level 2 parents
-            '1. Introduction', '1. Introduction', '1. Introduction',
-            '2. Basic Concepts', '2. Basic Concepts', '2. Basic Concepts', '2. Basic Concepts',
-            '3. Advanced Theory', '3. Advanced Theory', '3. Advanced Theory', '3. Advanced Theory',
-            '4. Applications', '4. Applications', '4. Applications',
-            '5. Final Project', '5. Final Project', '5. Final Project'
-        ],
-        'values': [
-            # Root
-            100,
-            # Level 1
-            15, 25, 20, 20, 20,
-            # Level 2
-            5, 5, 5,
-            6, 6, 7, 6,
-            5, 5, 5, 5,
-            7, 7, 6,
-            7, 7, 6
-        ],
-        'completion': [
-            # Root
-            68,
-            # Level 1 - Completion percentages
-            100, 80, 45, 10, 0,
-            # Level 2 - Topic completion
-            100, 100, 100,
-            100, 100, 80, 50,
-            92, 45, 0, 0,
-            10, 10, 0,
-            0, 0, 0
-        ]
-    }
+    # Create network graph tree structure with nodes and edges
+    import numpy as np
 
-    # Create color coding based on completion
-    colors = []
-    for completion in skills_data['completion']:
-        if completion == 100:
-            colors.append('#28a745')  # Green - Completed ✅
-        elif completion >= 50:
-            colors.append('#ffc107')  # Orange - In Progress 🔄
-        elif completion > 0:
-            colors.append('#17a2b8')  # Blue - Started 🚀
-        else:
-            colors.append('#6c757d')  # Gray - Locked 🔒
+    # Define tree structure with hierarchical positions
+    tree_nodes = [
+        # (id, label, completion, parent_id, level)
+        (0, 'Engineering<br>Course', 68, None, 0),
+        # Level 1 - Main modules
+        (1, '1. Introduction', 100, 0, 1),
+        (2, '2. Basic<br>Concepts', 80, 0, 1),
+        (3, '3. Advanced<br>Theory', 45, 0, 1),
+        (4, '4. Applications', 10, 0, 1),
+        (5, '5. Final<br>Project', 0, 0, 1),
+        # Level 2 - Topics
+        (6, '1.1 Overview', 100, 1, 2),
+        (7, '1.2 Tools', 100, 1, 2),
+        (8, '1.3 Setup', 100, 1, 2),
+        (9, '2.1 Fundamentals', 100, 2, 2),
+        (10, '2.2 Core Principles', 100, 2, 2),
+        (11, '2.3 Practice', 80, 2, 2),
+        (12, '2.4 Assessment', 50, 2, 2),
+        (13, '3.1 Complex Var', 92, 3, 2),
+        (14, '3.2 Matrix Ops', 45, 3, 2),
+        (15, '3.3 Diff Eq', 0, 3, 2),
+        (16, '3.4 Numerical', 0, 3, 2),
+        (17, '4.1 Real Cases', 10, 4, 2),
+        (18, '4.2 Industry Tools', 10, 4, 2),
+        (19, '4.3 Planning', 0, 4, 2),
+        (20, '5.1 Proposal', 0, 5, 2),
+        (21, '5.2 Development', 0, 5, 2),
+        (22, '5.3 Presentation', 0, 5, 2),
+    ]
 
-    # Create hover text with status
-    hover_texts = []
-    for i, (label, comp) in enumerate(zip(skills_data['labels'], skills_data['completion'])):
+    # Calculate positions for tree layout
+    def get_node_positions(nodes):
+        positions = {}
+        level_counts = {}
+        level_indices = {}
+
+        # Count nodes per level
+        for node_id, label, comp, parent_id, level in nodes:
+            level_counts[level] = level_counts.get(level, 0) + 1
+
+        # Initialize level indices
+        for level in level_counts:
+            level_indices[level] = 0
+
+        # Assign positions
+        for node_id, label, comp, parent_id, level in nodes:
+            y = -level * 1.5  # Vertical position (top to bottom)
+
+            # Horizontal position - spread evenly
+            total_in_level = level_counts[level]
+            index = level_indices[level]
+            level_indices[level] += 1
+
+            # Center the nodes
+            x = (index - (total_in_level - 1) / 2) * 2
+
+            positions[node_id] = (x, y)
+
+        return positions
+
+    positions = get_node_positions(tree_nodes)
+
+    # Create edges (connecting lines)
+    edge_x = []
+    edge_y = []
+
+    for node_id, label, comp, parent_id, level in tree_nodes:
+        if parent_id is not None:
+            x0, y0 = positions[parent_id]
+            x1, y1 = positions[node_id]
+            edge_x.extend([x0, x1, None])
+            edge_y.extend([y0, y1, None])
+
+    # Create edge trace
+    edge_trace = go.Scatter(
+        x=edge_x, y=edge_y,
+        line=dict(width=2, color='#888'),
+        hoverinfo='none',
+        mode='lines'
+    )
+
+    # Create node traces (separate by completion status for coloring)
+    node_data = {'completed': [], 'in_progress': [], 'started': [], 'locked': []}
+
+    for node_id, label, comp, parent_id, level in tree_nodes:
+        x, y = positions[node_id]
+
         if comp == 100:
+            category = 'completed'
             status = "✅ Completed"
         elif comp >= 50:
+            category = 'in_progress'
             status = "🔄 In Progress"
         elif comp > 0:
+            category = 'started'
             status = "🚀 Started"
         else:
+            category = 'locked'
             status = "🔒 Locked"
-        hover_texts.append(f"<b>{label}</b><br>{status}<br>Progress: {comp}%")
 
-    fig_tree = go.Figure(go.Icicle(
-        labels=skills_data['labels'],
-        parents=skills_data['parents'],
-        values=skills_data['values'],
-        marker=dict(
-            colors=colors,
-            line=dict(color='white', width=2),
-            colorscale=None
-        ),
-        text=hover_texts,
-        hovertemplate='%{text}<extra></extra>',
-        branchvalues="total",
-        textposition='middle center',
-        tiling=dict(
-            orientation='v',
-            pad=3
-        )
-    ))
+        node_data[category].append({
+            'x': x, 'y': y, 'label': label.replace('<br>', ' '),
+            'hover': f"<b>{label.replace('<br>', ' ')}</b><br>{status}<br>Progress: {comp}%"
+        })
+
+    # Color mapping
+    color_map = {
+        'completed': '#28a745',    # Green
+        'in_progress': '#ffc107',  # Orange
+        'started': '#17a2b8',      # Blue
+        'locked': '#6c757d'        # Gray
+    }
+
+    # Create node traces
+    node_traces = []
+    for category, nodes in node_data.items():
+        if nodes:
+            node_traces.append(go.Scatter(
+                x=[n['x'] for n in nodes],
+                y=[n['y'] for n in nodes],
+                mode='markers+text',
+                marker=dict(
+                    size=25,
+                    color=color_map[category],
+                    line=dict(width=2, color='white')
+                ),
+                text=[n['label'] for n in nodes],
+                textposition="middle center",
+                textfont=dict(size=9, color='white', family='Arial Black'),
+                hovertext=[n['hover'] for n in nodes],
+                hoverinfo='text',
+                name=category.replace('_', ' ').title()
+            ))
+
+    # Create figure
+    fig_tree = go.Figure(data=[edge_trace] + node_traces)
 
     fig_tree.update_layout(
         title={
-            'text': "Click on sections to expand and explore your learning path",
+            'text': "Skills Tree - Your Learning Path",
             'x': 0.5,
             'xanchor': 'center'
         },
-        height=600,
-        margin=dict(t=50, l=0, r=0, b=0)
+        showlegend=False,
+        hovermode='closest',
+        height=650,
+        margin=dict(t=50, l=20, r=20, b=20),
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        plot_bgcolor='white',
+        paper_bgcolor='white'
     )
 
     st.plotly_chart(fig_tree, use_container_width=True)
@@ -142,7 +192,7 @@ def display_learning_path():
     with col4:
         st.markdown("**🔒 Locked** - 0%")
 
-    st.info("💡 **Tip:** Click on any section in the tree to zoom in and explore sub-topics!")
+    st.info("💡 **Tip:** Hover over nodes to see detailed progress information. Lines connect parent topics to their subtopics.")
 
     # Learning path visualization
     st.markdown("---")
