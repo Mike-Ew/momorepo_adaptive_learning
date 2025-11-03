@@ -1,6 +1,7 @@
 # class_management.py - Auto-extracted from app.py
 import streamlit as st
 import pandas as pd
+import numpy as np
 
 
 def display_class_management():
