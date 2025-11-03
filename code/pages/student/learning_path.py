@@ -18,9 +18,129 @@ def display_learning_path():
         st.metric("Current Module", "Module 3: Advanced Concepts")
     with col3:
         st.metric("Pace", "On Track", delta="2 days ahead")
-    
+
+    # Skills Tree Visualization
+    st.markdown("---")
+    st.subheader("🌳 Skills Tree - Your Learning Path")
+
+    # Create interactive skills tree using Plotly Sunburst
+    skills_data = {
+        'labels': [
+            # Root
+            'Engineering Course',
+            # Level 1 - Main modules
+            '1. Introduction', '2. Basic Concepts', '3. Advanced Theory', '4. Applications', '5. Final Project',
+            # Level 2 - Topics under each module
+            '1.1 Overview', '1.2 Tools', '1.3 Setup',
+            '2.1 Fundamentals', '2.2 Core Principles', '2.3 Practice', '2.4 Assessment',
+            '3.1 Complex Variables', '3.2 Matrix Operations', '3.3 Differential Eq', '3.4 Numerical Methods',
+            '4.1 Real-world Cases', '4.2 Industry Tools', '4.3 Project Planning',
+            '5.1 Proposal', '5.2 Development', '5.3 Presentation'
+        ],
+        'parents': [
+            # Root parent
+            '',
+            # Level 1 parents (all belong to root)
+            'Engineering Course', 'Engineering Course', 'Engineering Course', 'Engineering Course', 'Engineering Course',
+            # Level 2 parents
+            '1. Introduction', '1. Introduction', '1. Introduction',
+            '2. Basic Concepts', '2. Basic Concepts', '2. Basic Concepts', '2. Basic Concepts',
+            '3. Advanced Theory', '3. Advanced Theory', '3. Advanced Theory', '3. Advanced Theory',
+            '4. Applications', '4. Applications', '4. Applications',
+            '5. Final Project', '5. Final Project', '5. Final Project'
+        ],
+        'values': [
+            # Root
+            100,
+            # Level 1
+            15, 25, 20, 20, 20,
+            # Level 2
+            5, 5, 5,
+            6, 6, 7, 6,
+            5, 5, 5, 5,
+            7, 7, 6,
+            7, 7, 6
+        ],
+        'completion': [
+            # Root
+            68,
+            # Level 1 - Completion percentages
+            100, 80, 45, 10, 0,
+            # Level 2 - Topic completion
+            100, 100, 100,
+            100, 100, 80, 50,
+            92, 45, 0, 0,
+            10, 10, 0,
+            0, 0, 0
+        ]
+    }
+
+    # Create color coding based on completion
+    colors = []
+    for completion in skills_data['completion']:
+        if completion == 100:
+            colors.append('#28a745')  # Green - Completed ✅
+        elif completion >= 50:
+            colors.append('#ffc107')  # Orange - In Progress 🔄
+        elif completion > 0:
+            colors.append('#17a2b8')  # Blue - Started 🚀
+        else:
+            colors.append('#6c757d')  # Gray - Locked 🔒
+
+    # Create hover text with status
+    hover_texts = []
+    for i, (label, comp) in enumerate(zip(skills_data['labels'], skills_data['completion'])):
+        if comp == 100:
+            status = "✅ Completed"
+        elif comp >= 50:
+            status = "🔄 In Progress"
+        elif comp > 0:
+            status = "🚀 Started"
+        else:
+            status = "🔒 Locked"
+        hover_texts.append(f"<b>{label}</b><br>{status}<br>Progress: {comp}%")
+
+    fig_tree = go.Figure(go.Sunburst(
+        labels=skills_data['labels'],
+        parents=skills_data['parents'],
+        values=skills_data['values'],
+        marker=dict(
+            colors=colors,
+            line=dict(color='white', width=2)
+        ),
+        text=hover_texts,
+        hovertemplate='%{text}<extra></extra>',
+        branchvalues="total",
+    ))
+
+    fig_tree.update_layout(
+        title={
+            'text': "Click on sections to explore your learning path",
+            'x': 0.5,
+            'xanchor': 'center'
+        },
+        height=600,
+        margin=dict(t=50, l=0, r=0, b=0)
+    )
+
+    st.plotly_chart(fig_tree, use_container_width=True)
+
+    # Legend
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown("**✅ Completed** - 100%")
+    with col2:
+        st.markdown("**🔄 In Progress** - 50-99%")
+    with col3:
+        st.markdown("**🚀 Started** - 1-49%")
+    with col4:
+        st.markdown("**🔒 Locked** - 0%")
+
+    st.info("💡 **Tip:** Click on any section in the tree to zoom in and explore sub-topics!")
+
     # Learning path visualization
-    st.subheader("Your Learning Journey")
+    st.markdown("---")
+    st.subheader("Your Learning Journey - Linear Progress")
 
     # Path visualization
     modules = ["Introduction", "Basic Concepts", "Advanced Theory", "Practical Application", "Final Project"]
