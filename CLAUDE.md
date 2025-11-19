@@ -96,7 +96,7 @@ Sessions automatically expire based on inactivity. The session validation checks
 
 ## Research Paper Context
 
-The application implements concepts from the research paper "Data-Driven Adaptive Curriculum-Personalizing Academic Pathways for Enhanced Engineering Student Success" ([presentation/paper/v2_fiee.pdf](presentation/paper/v2_fiee.pdf)).
+The application implements concepts from the research paper "Data-Driven Adaptive Curriculum-Personalizing Academic Pathways for Enhanced Engineering Student Success" ([paper/v2_fiee.pdf](paper/v2_fiee.pdf)).
 
 **Key Research Findings:**
 - System reduces "regret" (suboptimal recommendations) by 66% compared to standard approaches
