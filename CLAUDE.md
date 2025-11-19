@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a presentation project directory containing both research materials and a Streamlit-based AI-enhanced adaptive learning platform prototype. The project has two main components:
 
-1. **Research Papers and Presentation Materials** (root directory): Academic conference presentation materials based on research about data-driven adaptive curriculum personalization for engineering students
+1. **Research Papers and Presentation Materials** ([presentation/](presentation/)): Academic conference presentation materials based on research about data-driven adaptive curriculum personalization for engineering students
 2. **Streamlit Application** ([code/](code/)): A working prototype implementing AI-driven personalized learning pathways
 
 ## Running the Application
@@ -96,7 +96,7 @@ Sessions automatically expire based on inactivity. The session validation checks
 
 ## Research Paper Context
 
-The application implements concepts from the research paper "Data-Driven Adaptive Curriculum-Personalizing Academic Pathways for Enhanced Engineering Student Success" ([paper/v2_fiee.pdf](paper/v2_fiee.pdf)).
+The application implements concepts from the research paper "Data-Driven Adaptive Curriculum-Personalizing Academic Pathways for Enhanced Engineering Student Success" ([presentation/paper/v2_fiee.pdf](presentation/paper/v2_fiee.pdf)).
 
 **Key Research Findings:**
 - System reduces "regret" (suboptimal recommendations) by 66% compared to standard approaches
@@ -104,8 +104,11 @@ The application implements concepts from the research paper "Data-Driven Adaptiv
 - Addresses student attrition in engineering programs through personalized interventions
 
 **Presentation Materials:**
-- [presentation_guide.md](presentation_guide.md): Meta-guide on creating effective academic presentations
-- [diagram_guides.md](diagram_guides.md): ASCII art blueprints for presentation diagrams
+- [presentation/presentation_guide.md](presentation/presentation_guide.md): Meta-guide on creating effective academic presentations
+- [presentation/diagram_guides.md](presentation/diagram_guides.md): ASCII art blueprints for presentation diagrams
+- [presentation/presentation_v1.md](presentation/presentation_v1.md): First version of presentation
+- [presentation/presentation_v2.md](presentation/presentation_v2.md): Second version of presentation
+- [presentation/presentation_with_code.md](presentation/presentation_with_code.md): Technical presentation with code examples
 - [code/docs/AI-Enhanced Adaptive Learning Platform.md](code/docs/AI-Enhanced Adaptive Learning Platform.md): Complete technical specification
 
 ## Development Notes
