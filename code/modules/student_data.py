@@ -3,14 +3,14 @@ Shared student data module
 Provides consistent student profiles across teacher and student views
 """
 
-# Define the 3 real student accounts with varied learning profiles
+# Define the 3 real student accounts with varied learning preferences
 REAL_STUDENTS = {
     'student1': {
         'id': 1001,
         'username': 'student1',
         'name': 'Alex Johnson',
         'email': 'student1@example.com',
-        'learning_style': 'Visual/Interactive',
+        'learning_preference': 'Visual/Interactive',
         'preferred_pace': 'Moderate',
         'content_format': 'Video + Practice Problems',
         'overall_progress': 68,
@@ -111,7 +111,7 @@ REAL_STUDENTS = {
         'username': 'student2',
         'name': 'Sam Martinez',
         'email': 'student2@example.com',
-        'learning_style': 'Reading/Text',
+        'learning_preference': 'Reading/Text',
         'preferred_pace': 'Fast',
         'content_format': 'Articles + Quizzes',
         'overall_progress': 92,
@@ -212,7 +212,7 @@ REAL_STUDENTS = {
         'username': 'student3',
         'name': 'Jordan Lee',
         'email': 'student3@example.com',
-        'learning_style': 'Auditory/Visual',
+        'learning_preference': 'Auditory/Visual',
         'preferred_pace': 'Slow',
         'content_format': 'Videos + Discussions',
         'overall_progress': 35,

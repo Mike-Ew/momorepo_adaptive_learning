@@ -124,7 +124,7 @@ def display_student_schedule():
             return ['background-color: #e6ffe6'] * len(row)
 
     styled_df = deadlines.style.apply(highlight_priority, axis=1)
-    st.dataframe(styled_df, use_container_width=True)
+    st.dataframe(styled_df, width="stretch")
 
     # Schedule adjustment
     st.markdown("---")
@@ -235,7 +235,7 @@ def display_teacher_schedule():
         'Submissions': ['12/25', '0/25', '0/25', '0/25', '0/25']
     })
 
-    st.dataframe(assessments, use_container_width=True)
+    st.dataframe(assessments, width="stretch")
 
     # Schedule management
     st.markdown("---")
@@ -278,7 +278,7 @@ def display_teacher_schedule():
         'Status': ['🟡 Pending', '🟡 Pending', '🟡 Pending', '🟡 Pending']
     })
 
-    st.dataframe(extension_requests, use_container_width=True)
+    st.dataframe(extension_requests, width="stretch")
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -287,3 +287,4 @@ def display_teacher_schedule():
         st.button("❌ Deny Selected", key="teacher_deny")
     with col3:
         st.button("💬 Request More Info", key="teacher_info")
+

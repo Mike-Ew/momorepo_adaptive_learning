@@ -218,7 +218,7 @@ def display_learning_path():
         margin=dict(l=0, r=0, t=0, b=0)
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     
     # Detailed module view
     st.subheader("Current Module: Advanced Theory")
@@ -263,8 +263,8 @@ def display_learning_path():
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("### Current Preferences")
-        if user_prefs and user_prefs['learning_style']:
-            st.markdown(f"**Learning Style:** {user_prefs['learning_style']}")
+        if user_prefs and user_prefs['learning_preference']:
+            st.markdown(f"**Learning Preference:** {user_prefs['learning_preference']}")
             st.markdown(f"**Preferred Pace:** {user_prefs['preferred_pace']}")
             st.markdown(f"**Content Format:** {user_prefs['content_format']}")
         else:
@@ -274,16 +274,16 @@ def display_learning_path():
         st.markdown("### Update Preferences")
         if st.button("Update Learning Preferences", key="update_prefs_btn"):
             st.session_state.show_preferences_form = True
-        if st.button("Take Learning Style Assessment", key="take_assessment_btn"):
+        if st.button("Take Learning Preference Assessment", key="take_assessment_btn"):
             st.session_state.show_assessment = True
 
     # Radar chart visualization of learning style
-    if user_prefs and user_prefs['learning_style']:
+    if user_prefs and user_prefs['learning_preference']:
         st.markdown("---")
         st.subheader("Your Learning Profile")
 
-        # Map learning style to scores for radar chart
-        learning_style_scores = {
+        # Map learning preference to scores for radar chart
+        learning_preference_scores = {
             "Visual/Interactive": {"Visual": 90, "Reading": 40, "Auditory": 50, "Kinesthetic": 70},
             "Reading/Text": {"Visual": 40, "Reading": 95, "Auditory": 30, "Kinesthetic": 35},
             "Auditory/Visual": {"Visual": 75, "Reading": 45, "Auditory": 90, "Kinesthetic": 40},
@@ -291,9 +291,9 @@ def display_learning_path():
             "Mixed": {"Visual": 70, "Reading": 70, "Auditory": 70, "Kinesthetic": 70}
         }
 
-        # Get scores for current learning style
-        current_style = user_prefs['learning_style']
-        scores = learning_style_scores.get(current_style, {"Visual": 50, "Reading": 50, "Auditory": 50, "Kinesthetic": 50})
+        # Get scores for current learning preference
+        current_style = user_prefs['learning_preference']
+        scores = learning_preference_scores.get(current_style, {"Visual": 50, "Reading": 50, "Auditory": 50, "Kinesthetic": 50})
 
         # Create radar chart data
         categories = list(scores.keys())
@@ -327,7 +327,7 @@ def display_learning_path():
             ),
             showlegend=True,
             title=dict(
-                text=f"Learning Style Profile: {current_style}",
+                text=f"Learning Preference Profile: {current_style}",
                 x=0.5,
                 xanchor='center'
             ),
@@ -335,7 +335,7 @@ def display_learning_path():
             margin=dict(l=80, r=80, t=80, b=40)
         )
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     # Show preferences update form
     if st.session_state.get('show_preferences_form', False):
@@ -346,13 +346,13 @@ def display_learning_path():
             col1, col2, col3 = st.columns(3)
 
             with col1:
-                learning_style = st.selectbox(
-                    "Learning Style",
+                learning_preference = st.selectbox(
+                    "Learning Preference",
                     ["Visual/Interactive", "Reading/Text", "Auditory/Visual", "Kinesthetic/Hands-on", "Mixed"],
-                    index=0 if not user_prefs or not user_prefs['learning_style'] else
-                          ["Visual/Interactive", "Reading/Text", "Auditory/Visual", "Kinesthetic/Hands-on", "Mixed"].index(user_prefs['learning_style'])
-                          if user_prefs['learning_style'] in ["Visual/Interactive", "Reading/Text", "Auditory/Visual", "Kinesthetic/Hands-on", "Mixed"] else 0,
-                    key="pref_learning_style"
+                    index=0 if not user_prefs or not user_prefs['learning_preference'] else
+                          ["Visual/Interactive", "Reading/Text", "Auditory/Visual", "Kinesthetic/Hands-on", "Mixed"].index(user_prefs['learning_preference'])
+                          if user_prefs['learning_preference'] in ["Visual/Interactive", "Reading/Text", "Auditory/Visual", "Kinesthetic/Hands-on", "Mixed"] else 0,
+                    key="pref_learning_preference"
                 )
 
             with col2:
@@ -387,7 +387,7 @@ def display_learning_path():
             if submitted:
                 success, message = update_user_preferences(
                     username,
-                    learning_style=learning_style,
+                    learning_preference=learning_preference,
                     preferred_pace=preferred_pace,
                     content_format=content_format
                 )
@@ -402,10 +402,10 @@ def display_learning_path():
                 st.session_state.show_preferences_form = False
                 st.rerun()
 
-    # Show learning style assessment
+    # Show learning preference assessment
     if st.session_state.get('show_assessment', False):
         st.markdown("---")
-        st.subheader("Learning Style Assessment")
+        st.subheader("Learning Preference Assessment")
         st.info("Answer these questions to help us understand how you learn best!")
 
         with st.form("learning_assessment_form"):
@@ -456,13 +456,13 @@ def display_learning_path():
                 assess_cancel = st.form_submit_button("Cancel")
 
             if assess_submitted:
-                # Determine learning style based on answers
+                # Determine learning preference based on answers
                 visual_score = (1 if "videos" in q1.lower() else 0) + (1 if "videos" in q2.lower() else 0) + (1 if "Visual" in q4 else 0)
                 reading_score = (1 if "reading" in q1.lower() else 0) + (1 if "Reading" in q2.lower() else 0) + (1 if "Written" in q4 else 0)
                 auditory_score = (1 if "listening" in q1.lower() else 0) + (1 if "discussions" in q2.lower() else 0) + (1 if "Discussion" in q4 else 0)
                 kinesthetic_score = (1 if "hands-on" in q1.lower() else 0) + (1 if "practice" in q2.lower() else 0) + (1 if "Practical" in q4 else 0)
 
-                # Determine primary learning style
+                # Determine primary learning preference
                 scores = {
                     "Visual/Interactive": visual_score,
                     "Reading/Text": reading_score,
@@ -493,13 +493,13 @@ def display_learning_path():
                 # Save preferences
                 success, message = update_user_preferences(
                     username,
-                    learning_style=primary_style,
+                    learning_preference=primary_style,
                     preferred_pace=pace,
                     content_format=content
                 )
 
                 if success:
-                    st.success(f"✅ Assessment complete! Your learning style is: **{primary_style}**")
+                    st.success(f"✅ Assessment complete! Your learning preference is: **{primary_style}**")
                     st.info(f"Based on your responses, we recommend: {content} at a {pace} pace.")
                     st.session_state.show_assessment = False
                     st.balloons()
@@ -510,5 +510,7 @@ def display_learning_path():
             if assess_cancel:
                 st.session_state.show_assessment = False
                 st.rerun()
+
+
 
 

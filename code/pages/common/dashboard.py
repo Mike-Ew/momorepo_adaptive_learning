@@ -144,7 +144,7 @@ def display_student_dashboard():
                      color='Progress', color_continuous_scale='blues')
         fig.update_traces(texttemplate='%{text}%', textposition='outside')
         fig.update_layout(yaxis_range=[0, 100])
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     with col2:
         st.markdown("### Next Deadlines")
@@ -190,3 +190,4 @@ def display_student_dashboard():
             st.markdown("🎬 **Supplementary Resource**")
             st.markdown("Video: Understanding Big O Notation")
             st.markdown("_Aligns with your current learning path_")
+

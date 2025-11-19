@@ -26,14 +26,14 @@ def display_student_progress():
     with col4:
         st.metric("Engagement Score", "Medium")
     
-    # Learning Style Distribution for the class
-    st.subheader("Class Learning Style Distribution")
+    # Learning Preference Distribution for the class
+    st.subheader("Class Learning Preference Distribution")
 
     col1, col2 = st.columns([2, 1])
 
     with col1:
         # Mock class learning style data (in production, aggregate from all students)
-        learning_styles_count = {
+        learning_preferences_count = {
             "Visual/Interactive": 10,
             "Reading/Text": 6,
             "Auditory/Visual": 5,
@@ -43,13 +43,13 @@ def display_student_progress():
 
         # Create pie chart
         fig_pie = px.pie(
-            values=list(learning_styles_count.values()),
-            names=list(learning_styles_count.keys()),
-            title="Learning Style Distribution",
+            values=list(learning_preferences_count.values()),
+            names=list(learning_preferences_count.keys()),
+            title="Learning Preference Distribution",
             color_discrete_sequence=px.colors.qualitative.Set3
         )
         fig_pie.update_traces(textposition='inside', textinfo='percent+label')
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig_pie, width="stretch")
 
     with col2:
         st.markdown("### Class Insights")
@@ -75,7 +75,7 @@ def display_student_progress():
     # Calculate average scores across all learning styles in the class
     avg_scores = {"Visual": 0, "Reading": 0, "Auditory": 0, "Kinesthetic": 0}
 
-    learning_style_scores = {
+    learning_preference_scores = {
         "Visual/Interactive": {"Visual": 90, "Reading": 40, "Auditory": 50, "Kinesthetic": 70},
         "Reading/Text": {"Visual": 40, "Reading": 95, "Auditory": 30, "Kinesthetic": 35},
         "Auditory/Visual": {"Visual": 75, "Reading": 45, "Auditory": 90, "Kinesthetic": 40},
@@ -84,10 +84,10 @@ def display_student_progress():
     }
 
     # Calculate weighted average based on distribution
-    total_students = sum(learning_styles_count.values())
-    for style, count in learning_styles_count.items():
+    total_students = sum(learning_preferences_count.values())
+    for style, count in learning_preferences_count.items():
         weight = count / total_students
-        style_scores = learning_style_scores[style]
+        style_scores = learning_preference_scores[style]
         for dimension in avg_scores:
             avg_scores[dimension] += style_scores[dimension] * weight
 
@@ -129,7 +129,7 @@ def display_student_progress():
         margin=dict(l=60, r=60, t=60, b=40)
     )
 
-    st.plotly_chart(fig_radar, use_container_width=True)
+    st.plotly_chart(fig_radar, width="stretch")
 
     # Progress distribution
     st.markdown("---")
@@ -146,7 +146,7 @@ def display_student_progress():
         color=student_counts,
         color_continuous_scale='blues'
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     
     # Student list with risk levels
     st.subheader("Student List")
@@ -239,7 +239,7 @@ def display_student_progress():
             st.markdown(f"**Progress:** {student_profile['overall_progress']}%")
             st.markdown(f"**Risk Level:** {student_profile['risk_level']}")
             st.markdown(f"**Last Active:** {student_profile['last_active']}")
-            st.markdown(f"**Learning Style:** {student_profile['learning_style']}")
+            st.markdown(f"**Learning Preference:** {student_profile['learning_preference']}")
             st.markdown(f"**Preferred Pace:** {student_profile['preferred_pace']}")
             st.markdown(f"**Content Format:** {student_profile['content_format']}")
             st.markdown(f"**Engagement Pattern:** {student_profile['engagement_pattern']}")
@@ -248,7 +248,7 @@ def display_student_progress():
             st.markdown("**Progress:** 67.5%")
             st.markdown("**Risk Level:** Medium")
             st.markdown("**Last Active:** 2 days ago")
-            st.markdown("**Learning Style:** Visual/Interactive")
+            st.markdown("**Learning Preference:** Visual/Interactive")
             st.markdown("**Preferred Pace:** Moderate")
             st.markdown("**Content Format:** Video + Practice Problems")
             st.markdown("**Engagement Pattern:** Sporadic")
@@ -284,9 +284,9 @@ def display_student_progress():
     st.subheader(f"{selected_student}'s Learning Profile")
 
     # Mock learning style for demonstration (in production, fetch from user data)
-    student_learning_style = "Visual/Interactive"  # This would come from get_user_preferences()
+    student_learning_preference = "Visual/Interactive"  # This would come from get_user_preferences()
 
-    learning_style_scores = {
+    learning_preference_scores = {
         "Visual/Interactive": {"Visual": 90, "Reading": 40, "Auditory": 50, "Kinesthetic": 70},
         "Reading/Text": {"Visual": 40, "Reading": 95, "Auditory": 30, "Kinesthetic": 35},
         "Auditory/Visual": {"Visual": 75, "Reading": 45, "Auditory": 90, "Kinesthetic": 40},
@@ -294,7 +294,7 @@ def display_student_progress():
         "Mixed": {"Visual": 70, "Reading": 70, "Auditory": 70, "Kinesthetic": 70}
     }
 
-    scores = learning_style_scores.get(student_learning_style, {"Visual": 50, "Reading": 50, "Auditory": 50, "Kinesthetic": 50})
+    scores = learning_preference_scores.get(student_learning_preference, {"Visual": 50, "Reading": 50, "Auditory": 50, "Kinesthetic": 50})
 
     col1, col2 = st.columns([2, 1])
 
@@ -309,7 +309,7 @@ def display_student_progress():
             r=values,
             theta=categories,
             fill='toself',
-            name=student_learning_style,
+            name=student_learning_preference,
             fillcolor='rgba(99, 110, 250, 0.4)',
             line=dict(color='rgba(99, 110, 250, 1)', width=2)
         ))
@@ -330,7 +330,7 @@ def display_student_progress():
             ),
             showlegend=True,
             title=dict(
-                text=f"Learning Style: {student_learning_style}",
+                text=f"Learning Preference: {student_learning_preference}",
                 x=0.5,
                 xanchor='center'
             ),
@@ -338,7 +338,7 @@ def display_student_progress():
             margin=dict(l=60, r=60, t=60, b=40)
         )
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     with col2:
         st.markdown("### Teaching Recommendations")
@@ -359,5 +359,7 @@ def display_student_progress():
         st.markdown("### Content Preferences")
         st.success("**Best Format:** Video + Practice Problems")
         st.success("**Preferred Pace:** Moderate")
+
+
 
 
