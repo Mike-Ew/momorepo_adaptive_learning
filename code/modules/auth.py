@@ -5,10 +5,14 @@ import hashlib
 import os
 from datetime import datetime, timedelta
 
+# Get the data directory path relative to this module
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+USERS_CSV = os.path.join(DATA_DIR, "users.csv")
+
 
 # Set up database connection (using CSV for simplicity, use SQL in production)
 def load_users():
-    if not os.path.exists("data/users.csv"):
+    if not os.path.exists(USERS_CSV):
         # Create default admin user if file doesn't exist
         users = pd.DataFrame(
             {
@@ -17,18 +21,22 @@ def load_users():
                 "role": ["admin"],
                 "email": ["admin@example.com"],
                 "last_login": [None],
-                "learning_style": [None],
+                "learning_preference": [None],
                 "preferred_pace": [None],
                 "content_format": [None],
             }
         )
-        os.makedirs("data", exist_ok=True)
-        users.to_csv("data/users.csv", index=False)
+        os.makedirs(DATA_DIR, exist_ok=True)
+        users.to_csv(USERS_CSV, index=False)
     else:
-        users = pd.read_csv("data/users.csv")
+        users = pd.read_csv(USERS_CSV)
         # Add learning preference columns if they don't exist (for backward compatibility)
-        if "learning_style" not in users.columns:
-            users["learning_style"] = None
+        if "learning_preference" not in users.columns:
+            if "learning_style" in users.columns:
+                users["learning_preference"] = users["learning_style"]
+                users = users.drop(columns=["learning_style"])
+            else:
+                users["learning_preference"] = None
         if "preferred_pace" not in users.columns:
             users["preferred_pace"] = None
         if "content_format" not in users.columns:
@@ -37,7 +45,7 @@ def load_users():
 
 
 def save_users(users_df):
-    users_df.to_csv("data/users.csv", index=False)
+    users_df.to_csv(USERS_CSV, index=False)
 
 
 def authenticate(username, password):
@@ -71,7 +79,7 @@ def create_user(username, password, role, email):
             "role": [role],
             "email": [email],
             "last_login": [None],
-            "learning_style": [None],
+            "learning_preference": [None],
             "preferred_pace": [None],
             "content_format": [None],
         }
@@ -106,14 +114,14 @@ def get_user_preferences(username):
 
     if not user_row.empty:
         return {
-            "learning_style": user_row.iloc[0].get("learning_style"),
+            "learning_preference": user_row.iloc[0].get("learning_preference"),
             "preferred_pace": user_row.iloc[0].get("preferred_pace"),
             "content_format": user_row.iloc[0].get("content_format"),
         }
     return None
 
 
-def update_user_preferences(username, learning_style=None, preferred_pace=None, content_format=None):
+def update_user_preferences(username, learning_preference=None, preferred_pace=None, content_format=None):
     """Update learning preferences for a specific user"""
     users = load_users()
 
@@ -121,8 +129,8 @@ def update_user_preferences(username, learning_style=None, preferred_pace=None, 
         return False, "User not found"
 
     # Update only the provided fields
-    if learning_style is not None:
-        users.loc[users["username"] == username, "learning_style"] = learning_style
+    if learning_preference is not None:
+        users.loc[users["username"] == username, "learning_preference"] = learning_preference
     if preferred_pace is not None:
         users.loc[users["username"] == username, "preferred_pace"] = preferred_pace
     if content_format is not None:
