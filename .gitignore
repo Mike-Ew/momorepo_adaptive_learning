@@ -59,3 +59,6 @@ Thumbs.db
 *.csv
 data/*.csv
 code/data/*.csv
+
+# Exception: commit demo users for deployment
+!code/data/users.csv

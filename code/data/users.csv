@@ -1,0 +1,6 @@
+username,password,role,email,last_login,learning_preference,preferred_pace,content_format
+admin,240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9,admin,admin@example.com,2025-11-19 16:35:31,,,
+teacher1,0bb47b34b19365e40bcb8e97847c3e38e13374f14b13715d87e1fdd422f2f3d1,teacher,teacher1@example.com,2025-11-19 16:51:31,,,
+student1,0772901070d6eac178ccb0d3c8821fd5699cf96ee484e7ae7ea76795058414ed,student,student1@example.com,2025-11-19 16:57:42,,,
+student2,4ab2ac15d76f61b57f36bfcda338d2f3bbfca45e521547ebdbb59deada2eb073,student,student2@example.com,,,,
+student3,b4e3d41a7dd11382a9010e3eb5d4d14c4bdf555b272e9997b5adea0e5f56d241,student,student3@example.com,,,,
